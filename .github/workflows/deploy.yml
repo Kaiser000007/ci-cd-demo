@@ -1,0 +1,27 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]  # 每次 push 到 main 分支时触发
+
+permissions:
+  contents: write  # 必须有写入权限才能推送到 gh-pages 分支
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: "."  # 把项目根目录内容打包，包含 report.html
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2

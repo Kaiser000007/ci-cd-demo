@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -25,9 +25,9 @@ jobs:
         uses: actions/configure-pages@v3
 
       - name: Upload static files
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: '.'  # 请确保根目录下有 report.html 或 index.html
+          path: '.'  # 确保根目录有 index.html
 
       - name: Deploy to GitHub Pages
         id: deployment

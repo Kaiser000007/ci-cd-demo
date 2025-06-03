@@ -1,33 +1,21 @@
-name: Deploy to GitHub Pages
+name: Python CI
 
-on:
-  push:
-    branches: [main]
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+on: [push]
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - name: Upload HTML artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: '.'  # 根目录全部打包上传，必须包含你的 report.html
+    - name: Install dependencies
+      run: pip install pytest
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+    - name: Run tests
+      run: pytest hello.py

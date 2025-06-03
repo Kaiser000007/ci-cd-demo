@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Test and Deploy to GitHub Pages
 
 on:
   push:
@@ -10,25 +10,59 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  test-and-deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    runs-on: ubuntu-latest
-
     steps:
+      # 拉取代码
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 安装 Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # 安装测试依赖
+      - name: Install dependencies
+        run: pip install pytest
+
+      # 运行 Python 测试
+      - name: Run pytest tests
+        run: pytest hello.py
+
+      # 确认 index.html 存在
+      - name: Check if index.html exists
+        run: |
+          if [ ! -f index.html ]; then
+            echo "❌ index.html 不存在！"
+            exit 1
+          fi
+
+      # 简单验证 index.html 内容
+      - name: Validate HTML content
+        run: |
+          if ! grep -q "<html>" index.html; then
+            echo "❌ index.html 文件内容不合法！"
+            exit 1
+          fi
+          echo "✅ index.html 验证通过！"
+
+      # 设置 GitHub Pages 环境
       - name: Set up GitHub Pages
         uses: actions/configure-pages@v3
 
+      # 上传静态文件
       - name: Upload static files
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # 确保根目录有 index.html
+          path: '.'
 
+      # 部署到 GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

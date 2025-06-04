@@ -33,7 +33,7 @@ jobs:
 
       # 运行 Python 测试
       - name: Run pytest tests
-        run: pytest hello.py
+        run: pytest test_add.py
 
       # 确认 index.html 存在
       - name: Check if index.html exists
